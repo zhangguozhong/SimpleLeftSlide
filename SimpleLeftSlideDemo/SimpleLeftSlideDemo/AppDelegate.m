@@ -23,7 +23,6 @@
     SimpleContentViewController *contentViewController = [[SimpleContentViewController alloc] init];
     
     UINavigationController *mainController = [[UINavigationController alloc] initWithRootViewController:contentViewController];
-    
     SimpleLeftSlideViewController *slideViewController = [[SimpleLeftSlideViewController alloc] initWithLeftViewController:leftViewController contentViewController:mainController];
     slideViewController.maximumLeftDrawerWidth = 150;
     //slideViewController.contentViewScaleValue = 0.9;
