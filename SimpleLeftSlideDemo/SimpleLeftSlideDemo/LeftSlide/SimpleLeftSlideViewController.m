@@ -71,8 +71,7 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 @property (assign, nonatomic) CGRect startPanRect;
 @property (assign, nonatomic) CGFloat animatedDuration;
 @property (assign, nonatomic, readonly) BOOL scaleContainView;//是否开启缩放效果
-@property (assign, nonatomic) BOOL panFromEdge;
-@property (assign, nonatomic) BOOL visible;
+@property (assign, nonatomic) BOOL panFromEdge;//开启边界手势识别
 
 @property (assign, nonatomic) XPQDrawerSideStatus slideStatus;//抽屉效果打开状态
 @property (strong, nonatomic) UIButton *contentButton;
@@ -91,7 +90,7 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
         self.panVelocityXAnimationThreshold = XPQDrawerPanVelocityXAnimationThreshold;
         self.animationVelocity = XPQDrawerDefaultAnimationVelocity;
         self.panFromEdge = YES;
-        self.visible = NO;
+        self.slideStatus = XPQDrawerSideStatusClosed;
         
         [self setLeftViewController:leftViewController];
         [self setContentViewController:contentViewController];
@@ -205,7 +204,7 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
         }
     }
     
-    if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && !self.visible) {
+    if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && self.slideStatus == XPQDrawerSideStatusClosed) {
         CGPoint point = [touch locationInView:gestureRecognizer.view];
         if (point.x < XPQDrawerPanEdgeOffsetX || point.x > CGRectGetWidth(self.view.frame) - XPQDrawerPanEdgeOffsetX) {
             return YES;
@@ -241,7 +240,6 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
     } completion:^(BOOL finished) {
         if (finished) {
             self.slideStatus = XPQDrawerSideStatusOpen;
-            self.visible = YES;
             [self addContentButton];
         }
     }];
@@ -264,7 +262,6 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
     } completion:^(BOOL finished) {
         if (finished) {
             self.slideStatus = XPQDrawerSideStatusClosed;
-            self.visible = NO;
             [self.contentButton removeFromSuperview];
         }
     }];
