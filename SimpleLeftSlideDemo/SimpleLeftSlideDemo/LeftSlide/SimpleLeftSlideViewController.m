@@ -225,15 +225,6 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 
 - (void)openLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated
 {
-    [self openLeftSlideViewWithVelocity:velocity animated:animated complete:^(BOOL finished) {
-        self.slideStatus = XPQDrawerSideStatusOpen;
-        self.visible = YES;
-        [self addContentButton];
-    }];
-}
-
-- (void)openLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated complete:(void (^)(BOOL finished))complete
-{
     CGRect newFrame;
     CGRect oldFrame = self.containerView.frame;
     newFrame = self.containerView.frame;
@@ -248,11 +239,14 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
             self.containerView.transform = CGAffineTransformScale(self.containerView.transform, self.contentViewScaleValue, self.contentViewScaleValue);
         }
     } completion:^(BOOL finished) {
-        if (complete) {
-            complete(finished);
+        if (finished) {
+            self.slideStatus = XPQDrawerSideStatusOpen;
+            self.visible = YES;
+            [self addContentButton];
         }
     }];
 }
+
 
 // 关闭抽屉
 - (void)closeLeftSlideView
@@ -262,26 +256,20 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 
 - (void)closeLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated
 {
-    [self closeLeftSlideViewWithVelocity:velocity animated:animated complete:^(BOOL finished) {
-        self.slideStatus = XPQDrawerSideStatusClosed;
-        self.visible = NO;
-        [self.contentButton removeFromSuperview];
-    }];
-}
-
-- (void)closeLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated complete:(void (^)(BOOL finished))complete
-{
     CGFloat distance = CGRectGetMinX(self.containerView.frame);
     NSTimeInterval duration = MAX(distance/ABS(velocity), XPQDrawerMinimumAnimationDuration);
     
     [UIView animateWithDuration:animated ? duration : 0.f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.containerView.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
-        if (complete) {
-            complete(finished);
+        if (finished) {
+            self.slideStatus = XPQDrawerSideStatusClosed;
+            self.visible = NO;
+            [self.contentButton removeFromSuperview];
         }
     }];
 }
+
 
 // 手势结束状态判断
 - (void)finishAnimationForPanGestureWithXVelocity:(CGFloat)xVelocity
