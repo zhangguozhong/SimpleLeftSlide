@@ -57,6 +57,7 @@ CGFloat const XPQDrawerDefaultWidth = 150.0f;
 
 CGFloat const XPQDrawerDefaultAnimationVelocity = 840.0f;
 CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
+CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 
 
 @interface SimpleLeftSlideViewController () <UIGestureRecognizerDelegate>
@@ -70,6 +71,8 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
 @property (assign, nonatomic) CGRect startPanRect;
 @property (assign, nonatomic) CGFloat animatedDuration;
 @property (assign, nonatomic, readonly) BOOL scaleContainView;//是否开启缩放效果
+@property (assign, nonatomic) BOOL panFromEdge;
+@property (assign, nonatomic) BOOL visible;
 
 @property (assign, nonatomic) XPQDrawerSideStatus slideStatus;//抽屉效果打开状态
 @property (strong, nonatomic) UIButton *contentButton;
@@ -87,6 +90,8 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
         self.maximumLeftDrawerWidth = XPQDrawerDefaultWidth;
         self.panVelocityXAnimationThreshold = XPQDrawerPanVelocityXAnimationThreshold;
         self.animationVelocity = XPQDrawerDefaultAnimationVelocity;
+        self.panFromEdge = YES;
+        self.visible = NO;
         
         [self setLeftViewController:leftViewController];
         [self setContentViewController:contentViewController];
@@ -200,6 +205,15 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
         }
     }
     
+    if (self.panFromEdge && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && !self.visible) {
+        CGPoint point = [touch locationInView:gestureRecognizer.view];
+        if (point.x < XPQDrawerPanEdgeOffsetX || point.x > CGRectGetWidth(self.view.frame) - XPQDrawerPanEdgeOffsetX) {
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+    
     return YES;
 }
 
@@ -208,6 +222,7 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
 {
     [self openLeftSlideViewWithVelocity:self.animationVelocity animated:YES complete:^(BOOL finished) {
         self.slideStatus = XPQDrawerSideStatusOpen;
+        self.visible = YES;
         [self addContentButton];
     }];
 }
@@ -239,6 +254,7 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
 {
     [self closeLeftSlideViewWithVelocity:self.animationVelocity animated:YES complete:^(BOOL finished) {
         self.slideStatus = XPQDrawerSideStatusClosed;
+        self.visible = NO;
         [self.contentButton removeFromSuperview];
     }];
 }
@@ -267,12 +283,14 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
     if (xVelocity > self.panVelocityXAnimationThreshold) {
         [self openLeftSlideViewWithVelocity:animationVelocity animated:YES complete:^(BOOL finished) {
             self.slideStatus = XPQDrawerSideStatusOpen;
+            self.visible = YES;
             [self addContentButton];
         }];
     }
     else if (xVelocity < -self.panVelocityXAnimationThreshold) {
         [self closeLeftSlideViewWithVelocity:animationVelocity animated:YES complete:^(BOOL finished) {
             self.slideStatus = XPQDrawerSideStatusClosed;
+            self.visible = NO;
             [self.contentButton removeFromSuperview];
         }];
     }
@@ -284,8 +302,7 @@ CGFloat const XPQDrawerPanVelocityXAnimationThreshold = 200.0f;
     }
 }
 
-- (NSTimeInterval)animationDurationForAnimationDistance:(CGFloat)distance
-{
+- (NSTimeInterval)animationDurationForAnimationDistance:(CGFloat)distance {
     return MAX((distance/self.animationVelocity), XPQDrawerMinimumAnimationDuration);
 }
 

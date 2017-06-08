@@ -19,6 +19,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:self.tableView];
 }
 
@@ -30,6 +31,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     cell.textLabel.text = [@[@"150",@"180",@"200"] objectAtIndex:indexPath.row];
@@ -59,6 +61,7 @@
         tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         tableView.showsHorizontalScrollIndicator = NO;
+        tableView.backgroundColor = [UIColor lightGrayColor];
         _tableView = tableView;
     }
     return _tableView;
