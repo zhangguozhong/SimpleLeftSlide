@@ -220,7 +220,12 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 // 打开抽屉
 - (void)openLeftSlideView
 {
-    [self openLeftSlideViewWithVelocity:self.animationVelocity animated:YES complete:^(BOOL finished) {
+    [self openLeftSlideViewWithVelocity:self.animationVelocity animated:YES];
+}
+
+- (void)openLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated
+{
+    [self openLeftSlideViewWithVelocity:velocity animated:animated complete:^(BOOL finished) {
         self.slideStatus = XPQDrawerSideStatusOpen;
         self.visible = YES;
         [self addContentButton];
@@ -252,7 +257,12 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
 // 关闭抽屉
 - (void)closeLeftSlideView
 {
-    [self closeLeftSlideViewWithVelocity:self.animationVelocity animated:YES complete:^(BOOL finished) {
+    [self closeLeftSlideViewWithVelocity:self.animationVelocity animated:YES];
+}
+
+- (void)closeLeftSlideViewWithVelocity:(CGFloat)velocity animated:(BOOL)animated
+{
+    [self closeLeftSlideViewWithVelocity:velocity animated:animated complete:^(BOOL finished) {
         self.slideStatus = XPQDrawerSideStatusClosed;
         self.visible = NO;
         [self.contentButton removeFromSuperview];
@@ -281,18 +291,10 @@ CGFloat const XPQDrawerPanEdgeOffsetX = 15.f;
     CGFloat currentOffsetX = CGRectGetMinX(self.containerView.frame);
     
     if (xVelocity > self.panVelocityXAnimationThreshold) {
-        [self openLeftSlideViewWithVelocity:animationVelocity animated:YES complete:^(BOOL finished) {
-            self.slideStatus = XPQDrawerSideStatusOpen;
-            self.visible = YES;
-            [self addContentButton];
-        }];
+        [self openLeftSlideViewWithVelocity:animationVelocity animated:YES];
     }
     else if (xVelocity < -self.panVelocityXAnimationThreshold) {
-        [self closeLeftSlideViewWithVelocity:animationVelocity animated:YES complete:^(BOOL finished) {
-            self.slideStatus = XPQDrawerSideStatusClosed;
-            self.visible = NO;
-            [self.contentButton removeFromSuperview];
-        }];
+        [self closeLeftSlideViewWithVelocity:animationVelocity animated:YES];
     }
     else if (currentOffsetX < midOffsetX) {
         [self closeLeftSlideView];
