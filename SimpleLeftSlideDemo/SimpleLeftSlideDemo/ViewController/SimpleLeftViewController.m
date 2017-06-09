@@ -8,6 +8,7 @@
 
 #import "SimpleLeftViewController.h"
 #import "UIViewController+LeftSlide.h"
+#import "ViewController.h"
 
 @interface SimpleLeftViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -38,15 +39,22 @@
     return cell;
 }
 
+// 点击跳转新的视图
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    __weak typeof(self) weakSelf = self;
-    [self.leftSlideViewController setMaximumLeftDrawerWidth:[cell.textLabel.text doubleValue] animated:YES complete:^(BOOL finish) {
-        if (finish) {
-            NSLog(@"%f", weakSelf.leftSlideViewController.maximumLeftDrawerWidth);
-        }
-    }];
+//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    __weak typeof(self) weakSelf = self;
+//    [self.leftSlideViewController setMaximumLeftDrawerWidth:[cell.textLabel.text doubleValue] animated:YES complete:^(BOOL finish) {
+//        if (finish) {
+//            NSLog(@"%f", weakSelf.leftSlideViewController.maximumLeftDrawerWidth);
+//        }
+//    }];
+    
+    
+    UINavigationController *navigationController = (UINavigationController *)self.leftSlideViewController.contentViewController;
+    ViewController *VC = [[ViewController alloc] init];
+    [navigationController pushViewController:VC animated:NO];
+    [self.leftSlideViewController closeLeftSlideView];
 }
 
 
